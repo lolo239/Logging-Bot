@@ -272,7 +272,7 @@ app.post('/submit', (req, res) => {
   });
 });
 
-client.login("MTM4NTk5MTg1MTI5ODkxODY0MQ.GEc8Vq.MBSXP8a8nZ-5uc34ReZgkxr2X2cAs79YmzaUFw");
+client.login("DICROD_TOKEN");
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server läuft');
